@@ -1,62 +1,51 @@
 import React, { Component } from 'react';
 
-import Timer from './Timer'
+class Timer extends Component {
 
-class App extends Component {
-
-  //no props being used here, so we can use the shorthand declaration of state
   state = {
-    timerIDs: []
+    time: 0,
+    color: '#'+Math.floor(Math.random()*16777215).toString(16)
   }
 
+  // add your code here
+  componentDidMount() {
+    this.interval = setInterval(this.clockTick, 1000)
+  }
 
-  //Your code here:
+  componentWillUnmount() {
+    clearInterval(this.interval)
+  }
 
-
-
-
-
-
-
-
-
-  // No need to modify anything in render or the class methods below
-  // Unless, of course, you're curious about how it all works
   render() {
 
+    const { time, color, className } = this.state
     return (
-      <div className="App">
-        <h1>MultiTimer</h1>
-        <button onClick={this.handleAddTimer}>Add New Timer</button>
+      <section className="Timer" style={{background: color}}>
 
-        <div className="TimerGrid">
-          {this.renderTimers()}
-        </div>
+        <h1>{ time }</h1>
+        <button onClick={ this.stopClock }>Stop</button>
+        <aside className="mountText">Mounted</aside>
+        <small onClick={ this.handleClose }>X</small>
 
-      </div>
+      </section>
     );
   }
 
-  // returns array of components written in JSX, mapped from this.state.timerIDs
-  renderTimers = () => this.state.timerIDs.map(id => {
-    return <Timer key={id} id={id} removeTimer={this.removeTimer} />
-  })
-
-  // adds a random number for timer ID
-  handleAddTimer = () => {
+  //clock functions
+  clockTick = () => {
     this.setState(prevState => ({
-      timerIDs: [...prevState.timerIDs, Math.floor(Math.random()*1000)]
+      time: prevState.time+1
     }))
   }
 
-  // removeTimer updates state, removing any timer that matches the provided author
-  removeTimer = id => {
-    this.setState(prevState => ({
-      timerIDs: prevState.timerIDs.filter(timer_id => timer_id !== id)
-    }))
+  stopClock = () => {
+    clearInterval(this.interval)
+  }
+
+  // for the 'x' button,
+  handleClose = () => {
+    this.props.removeTimer(this.props.id)
   }
 
 
 }
-
-export default App;
